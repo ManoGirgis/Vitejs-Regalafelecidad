@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FetchingPut from '../Api/FetchingPut';
 
-const Carrito = () => {
+const Carrito = (props) => {
     const navigate = useNavigate();
     const error = location.state?.error;
 
 
-
+    const [id, setId] = useState(localStorage.getItem('orderId') || null);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -18,11 +19,27 @@ const Carrito = () => {
         return [...productos, ...reservas];
     });
 
+    const { data: order, loading, error: errorput, fetchData } = FetchingPut();
+
+    if (props.error != null) {
+        useEffect(() => {
+
+            console.log(localStorage);
+            setId(localStorage.getItem('orderId'));
+            console.log('id', id);
+            const updatedata = {
+                status: "failed",
+            };
+            fetchData(`orders/${id}`, updatedata);
+        }, [props.error]);
+    }
+
     const redirectToCheckoutPage = async () => {
 
         const orderId = await createOrderInWooCommerce();
         if (!orderId) return alert("Error al generar el pedido en WooCommerce");
 
+        localStorage.setItem('orderId', orderId);
         const totalAmount = Math.round(cart.reduce((total, p) => total + p.price * p.quantity, 0) * 100);
 
         navigate("/checkout", { state: { cart, totalAmount, orderId } });

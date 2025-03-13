@@ -1,7 +1,11 @@
-import React from 'react';
+import { useEffect } from 'react';
+import React, { use } from 'react';
 import Carrito from './Carrito';
+import FetchingPut from '../Api/FetchingPut';
 
 const Carritoerr = () => {
+
+
 
     return (
         <>
@@ -9,7 +13,9 @@ const Carritoerr = () => {
                 <strong className="font-bold">Error:</strong>
                 <span className="block sm:inline"> Ha ocurrido un error al procesar el pago.</span>
             </div>
-            <Carrito />
+            <Carrito
+                error={1}
+            />
         </>
     );
 };
